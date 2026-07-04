@@ -17,3 +17,7 @@ Pages:
 - `model_report.html` — model, token, cost, and coverage report for the extraction run
 
 All run-specific text (model name, counts) is rendered from `assets/data.js` at runtime. Local entry point: `index.html`.
+
+## Contributing
+
+Know a documented relation that's missing? Click **"+ Suggest a relation"** on any page, or see [CONTRIBUTING.md](CONTRIBUTING.md).

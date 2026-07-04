@@ -3,7 +3,7 @@
   const {
     DATA, nodeById, fmt, esc, el, CONF,
     typeColor, typeLabel, familyColor, familyLabel, confColor,
-    graphLink, atlasLink, initials, sourceTail,
+    graphLink, atlasLink, initials, sourceTail, contributeLink,
   } = window.M4;
 
   const filters = { q: '', type: 'all', sort: 'degree' };
@@ -96,6 +96,7 @@
       ${confMeter(n.confidence || {})}
       <div class="toolbar" style="margin:14px 0">
         ${rels.length ? `<a class="btn mini" href="${graphLink(n.id)}">View in constellation</a>` : ''}
+        <a class="btn ghost mini" href="${contributeLink(n.label)}" target="_blank" rel="noopener">+ Suggest a relation for ${esc(n.label)}</a>
         <button class="btn ghost mini" id="modalBackBtn">Back to catalog</button>
       </div>
       ${topSources.length ? `<h4 style="font-size:11px;text-transform:uppercase;letter-spacing:.18em;color:var(--faint);margin:18px 0 6px">Most-cited sources for this node</h4>

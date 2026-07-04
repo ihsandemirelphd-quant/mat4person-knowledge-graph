@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Contribution guide
+    url: https://github.com/ihsandemirelphd-quant/mat4person-knowledge-graph/blob/main/CONTRIBUTING.md
+    about: Read how submissions are reviewed and merged before opening an issue.

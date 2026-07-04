@@ -1,0 +1,115 @@
+name: Suggest a relation
+description: Propose a documented relation between two people, an institute, or an event — with a source and an exact quote.
+title: "[Relation] "
+labels: ["community-submission", "needs-review"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping complete the atlas. MAT4Person is evidence-first — every relation needs a
+        real source and the exact words that establish it. Please read [CONTRIBUTING.md](https://github.com/ihsandemirelphd-quant/mat4person-knowledge-graph/blob/main/CONTRIBUTING.md)
+        if you haven't already. One relation per issue, please.
+
+  - type: input
+    id: entity-a
+    attributes:
+      label: Person A
+      description: The person on one side of the relation. Use the name as it already appears in the atlas if you know it.
+      placeholder: e.g. Erdal İnönü
+    validations:
+      required: true
+
+  - type: input
+    id: entity-b
+    attributes:
+      label: The other person, institute, or event
+      placeholder: e.g. Cahit Arf — or "Türk Matematik Derneği" — or "1948 I. Türk Matematik Kongresi"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: relation-family
+    attributes:
+      label: Relation family
+      options:
+        - Person ↔ Person
+        - Person ↔ Institute
+        - Person ↔ Event
+    validations:
+      required: true
+
+  - type: input
+    id: relation-type
+    attributes:
+      label: Relation type
+      description: A short label for what this relation is.
+      placeholder: e.g. mentor, co-author, founding member, academic_environment
+    validations:
+      required: true
+
+  - type: textarea
+    id: quote
+    attributes:
+      label: Exact quote
+      description: Copy the exact sentence(s) from the source that establishes this relation — word for word, not a paraphrase. Original language is fine.
+      placeholder: "\"...\""
+    validations:
+      required: true
+
+  - type: input
+    id: source
+    attributes:
+      label: Source document
+      description: Title, book/article name, or a link to the document.
+      placeholder: e.g. "History of the Feza Gürsey Institute — People.pdf", or a URL
+    validations:
+      required: true
+
+  - type: input
+    id: page
+    attributes:
+      label: Page number
+      description: If the source has pages.
+      placeholder: e.g. 42
+    validations:
+      required: false
+
+  - type: input
+    id: dates
+    attributes:
+      label: Date(s), if known
+      placeholder: e.g. 1963, or 1958–1962
+    validations:
+      required: false
+
+  - type: input
+    id: places
+    attributes:
+      label: Place(s), if relevant
+      placeholder: e.g. Ankara
+    validations:
+      required: false
+
+  - type: textarea
+    id: note
+    attributes:
+      label: Additional context
+      description: Anything that helps a reviewer understand or verify the relation.
+    validations:
+      required: false
+
+  - type: input
+    id: contributor
+    attributes:
+      label: Your name or handle
+      description: Optional — for credit when this is merged.
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: confirmation
+    attributes:
+      label: Confirmation
+      options:
+        - label: I copied this quote exactly from a real, citable source — it is not paraphrased or invented.
+          required: true

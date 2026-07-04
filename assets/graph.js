@@ -4,7 +4,7 @@
   const {
     DATA, fmt, esc, el, reduceMotion, FAMILY, CONF,
     typeColor, typeLabel, typeShape, familyColor, confColor, familyLabel,
-    nodeRadius, drawNode, legendGlyph, makeSim, cardLink, atlasLink, initials, sourceTail, hashCode,
+    nodeRadius, drawNode, legendGlyph, makeSim, cardLink, atlasLink, initials, sourceTail, hashCode, contributeLink,
   } = M;
 
   /* ---------- model: connected nodes only (isolated ones live in the ID cards) ---------- */
@@ -253,7 +253,9 @@
       <h2 class="detail-title">Pick a star from the sky.</h2>
       <p class="meta">Click any node for its documented neighborhood, or an edge for the exact quote behind it. Every connection here exists because a source says so.</p>
       <h4>Start with a sun</h4>
-      <div class="node-list" id="sunShortcuts"></div>`;
+      <div class="node-list" id="sunShortcuts"></div>
+      <h4>Missing someone?</h4>
+      <a class="btn ghost mini" href="${contributeLink()}" target="_blank" rel="noopener">+ Suggest a relation</a>`;
     const box = inspector.querySelector('#sunShortcuts');
     suns.forEach(n => {
       const row = el('div', 'node-row', `
@@ -300,6 +302,7 @@
       <div class="toolbar" style="margin-top:12px">
         <a class="btn ghost mini" href="${cardLink(n.id)}">Open ID card</a>
         <button class="btn ghost mini" id="inspFocus">${state.focus ? 'Unfocus' : 'Focus'} neighborhood</button>
+        <a class="btn ghost mini" href="${contributeLink(n.label)}" target="_blank" rel="noopener">+ Suggest a relation</a>
       </div>
       <div id="relGroups"></div>`;
     inspector.querySelector('#inspFocus').onclick = () => { state.focus = !state.focus; syncFocusBtn(); renderNode(n); };

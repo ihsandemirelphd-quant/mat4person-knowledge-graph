@@ -30,6 +30,19 @@ window.M4 = (() => {
   const sourceTail = p => String(p || '').split('/').pop() || '';
   const hashCode = s => { let h = 0; for (let i = 0; i < s.length; i++) h = ((h << 5) - h) + s.charCodeAt(i) | 0; return h; };
 
+  /* ---------- community contribution links ----------
+     Static site, no backend — submissions go through a GitHub Issue Form
+     in the published repo. See .github/ISSUE_TEMPLATE/suggest-relation.yml. */
+  const CONTRIB_REPO = 'ihsandemirelphd-quant/mat4person-knowledge-graph';
+  function contributeLink(entityName) {
+    const params = new URLSearchParams({ template: 'suggest-relation.yml' });
+    if (entityName) params.set('entity-a', entityName);
+    return `https://github.com/${CONTRIB_REPO}/issues/new?${params.toString()}`;
+  }
+  function fillContributeLinks() {
+    document.querySelectorAll('[data-contribute-link]').forEach(a => { a.href = contributeLink(); });
+  }
+
   /* ---------- DOM helpers ---------- */
   function el(tag, cls, html) {
     const e = document.createElement(tag);
@@ -290,13 +303,13 @@ window.M4 = (() => {
 
   /* boot shared page chrome */
   document.addEventListener('DOMContentLoaded', () => {
-    markActiveNav(); fillModel(); initSky(); animateCounters();
+    markActiveNav(); fillModel(); initSky(); animateCounters(); fillContributeLinks();
   });
 
   return {
     DATA, nodeById, fmt, reduceMotion, TYPE, FAMILY, CONF,
     typeColor, typeLabel, typeShape, familyColor, confColor, familyLabel,
     esc, el, relationTitle, cardLink, graphLink, atlasLink, initials, sourceTail, hashCode,
-    nodeRadius, drawNode, legendGlyph, makeSim, animateCounters,
+    nodeRadius, drawNode, legendGlyph, makeSim, animateCounters, contributeLink,
   };
 })();
