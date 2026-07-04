@@ -1,1 +1,99 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="stylesheet" href="assets/styles.css"><title>MAT4Person Run Report</title></head><body><div class="topbar"><a class="brand" href="index.html"><span class="brand-mark">M4</span><span>MAT4Person Knowledge Graph</span></a><nav class="nav"><a href="index.html">Overview</a><a href="knowledge_graph.html">Graph</a><a href="id_cards.html">ID Cards</a><a href="evidence_atlas.html">Evidence</a><a href="model_report.html">Run Report</a></nav></div><main class="wrap"><section class="section"><div class="eyebrow">Run report</div><h1 class="detail-title">Gemini extraction ledger</h1><div id="kpis" class="stat-strip"></div></section><section class="section"><h2>Usage by relation family</h2><table class="table"><thead><tr><th>Family</th><th>Calls</th><th>Input tokens</th><th>Output tokens</th><th>Cost</th></tr></thead><tbody id="families"></tbody></table></section><section class="section"><h2>High-degree nodes</h2><table class="table"><thead><tr><th>Node</th><th>Type</th><th>Degree</th><th>High</th><th>Medium</th><th>Low</th></tr></thead><tbody id="topTable"></tbody></table></section></main><script src="assets/data.js"></script><script src="assets/report.js"></script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Run Report — MAT4Person</title>
+<meta name="description" content="Model, token, cost, and coverage report for this MAT4Person extraction run.">
+<link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%23e9b44c" d="M12 0l2.6 9.4L24 12l-9.4 2.6L12 24l-2.6-9.4L0 12l9.4-2.6z"/></svg>'>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+<canvas class="sky" aria-hidden="true"></canvas>
+
+<header class="topbar">
+  <a class="brand" href="index.html">
+    <span class="brand-mark">✦</span>
+    <span><span class="brand-name">MAT4Person</span><span class="brand-sub">Atlas of Turkish Science</span></span>
+  </a>
+  <nav class="nav">
+    <a href="index.html">Overview</a>
+    <a href="knowledge_graph.html">Constellation</a>
+    <a href="id_cards.html">ID Cards</a>
+    <a href="evidence_atlas.html">Evidence Atlas</a>
+    <a href="model_report.html">Run Report</a>
+  </nav>
+</header>
+
+<main class="wrap">
+  <section class="section" style="padding-top:34px">
+    <div class="section-head">
+      <div class="eyebrow">Behind the curtain</div>
+      <h1 class="display h2">Run Report — <span data-model>model</span></h1>
+      <p class="meta" style="max-width:640px">What it took to draw this sky: every model call, token, and cent, plus how the extracted graph is distributed across types, confidence grades, and sources.</p>
+    </div>
+
+    <div id="kpis" class="kpi-row"></div>
+
+    <div class="grid cols2" style="margin-top:8px">
+      <div class="card">
+        <h3>Cost by relation family</h3>
+        <div id="famCost"></div>
+      </div>
+      <div class="card">
+        <h3>Confidence mix</h3>
+        <div class="donut-wrap">
+          <canvas id="confDonut" width="190" height="190" style="width:190px;height:190px"></canvas>
+          <div class="donut-legend" id="confLegend"></div>
+        </div>
+        <h3 style="margin-top:22px">Degree distribution</h3>
+        <div id="degHist"></div>
+      </div>
+    </div>
+
+    <div class="grid cols2" style="margin-top:16px">
+      <div class="card">
+        <h3>All relation types</h3>
+        <div id="types" style="max-height:430px;overflow-y:auto"></div>
+      </div>
+      <div class="card">
+        <h3>Run configuration</h3>
+        <table class="table"><tbody id="config"></tbody></table>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:16px">
+      <h3>Brightest stars — degree leaderboard</h3>
+      <div style="overflow-x:auto">
+        <table class="table">
+          <thead><tr><th>#</th><th>Node</th><th>Type</th><th>Degree</th><th>High</th><th>Medium</th><th>Low</th></tr></thead>
+          <tbody id="topTable"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:16px">
+      <h3>Most-cited sources</h3>
+      <div style="overflow-x:auto">
+        <table class="table">
+          <thead><tr><th>Citations</th><th>Source document</th></tr></thead>
+          <tbody id="srcTable"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div><span class="star">✦</span> MAT4Person — an evidence-first atlas of Turkish science.</div>
+  <div class="mono">model <span data-model></span> · every edge cites source, page &amp; quote</div>
+</footer>
+
+<script src="assets/data.js"></script>
+<script src="assets/common.js"></script>
+<script src="assets/report.js"></script>
+</body>
+</html>

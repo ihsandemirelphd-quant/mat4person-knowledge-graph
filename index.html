@@ -1,2 +1,112 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="stylesheet" href="assets/styles.css"><title>MAT4Person Knowledge Graph</title></head><body><div class="topbar"><a class="brand" href="index.html"><span class="brand-mark">M4</span><span>MAT4Person Knowledge Graph</span></a><nav class="nav"><a href="index.html">Overview</a><a href="knowledge_graph.html">Graph</a><a href="id_cards.html">ID Cards</a><a href="evidence_atlas.html">Evidence</a><a href="model_report.html">Run Report</a></nav></div>
-<main class="wrap"><section class="hero"><div class="headline"><div class="eyebrow">Full Gemini 3.1 Flash-Lite run</div><div class="h1">A Turkish science network, drawn from evidence.</div><p class="lead">Four centennial scientist nodes, 250 people, 30 institutions, 21 events, and every positive relation backed by source path, page, and quote.</p><div class="actions"><a class="action" href="knowledge_graph.html">Open the graph</a><a class="action secondary" href="id_cards.html">Browse ID cards</a><a class="action secondary" href="evidence_atlas.html">Browse evidence</a><a class="action secondary" href="model_report.html">Read run report</a></div><div id="stats" class="stat-strip"></div></div><div class="hero-viz"><canvas id="miniCanvas" class="mini-canvas"></canvas></div></section><section class="section"><h2>Network centers</h2><div id="topNodes" class="grid cols4"></div></section><section class="section"><h2>Relation types</h2><table class="table"><tbody id="types"></tbody></table></section></main><script src="assets/data.js"></script><script src="assets/index.js"></script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MAT4Person — A Constellation of Turkish Science</title>
+<meta name="description" content="An evidence-first knowledge graph of four centennial Turkish scientists and the people, institutions, and events around them.">
+<link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%23e9b44c" d="M12 0l2.6 9.4L24 12l-9.4 2.6L12 24l-2.6-9.4L0 12l9.4-2.6z"/></svg>'>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+<canvas class="sky" aria-hidden="true"></canvas>
+
+<header class="topbar">
+  <a class="brand" href="index.html">
+    <span class="brand-mark">✦</span>
+    <span><span class="brand-name">MAT4Person</span><span class="brand-sub">Atlas of Turkish Science</span></span>
+  </a>
+  <nav class="nav">
+    <a href="index.html">Overview</a>
+    <a href="knowledge_graph.html">Constellation</a>
+    <a href="id_cards.html">ID Cards</a>
+    <a href="evidence_atlas.html">Evidence Atlas</a>
+    <a href="model_report.html">Run Report</a>
+  </nav>
+</header>
+
+<main class="wrap">
+  <section class="hero">
+    <div class="headline">
+      <div class="eyebrow">Full <span data-model>model</span> run <span class="sep">·</span> evidence-first extraction</div>
+      <h1 class="display h1">A constellation of Turkish science.</h1>
+      <p class="flourish">Dört güneş, bir gökyüzü — kanıttan çizilmiş bir bilim haritası.</p>
+      <p class="lead" id="heroLead">Four centennial scientists at the center; the people, institutions, and events of their world around them. Every relation carries a source, a page, and an exact quote.</p>
+      <div class="actions">
+        <a class="btn" href="knowledge_graph.html">Enter the constellation</a>
+        <a class="btn ghost" href="evidence_atlas.html">Read the evidence</a>
+        <a class="btn ghost" href="id_cards.html">Browse ID cards</a>
+      </div>
+      <div id="stats" class="stat-strip"></div>
+    </div>
+    <div class="hero-viz">
+      <canvas id="heroCanvas"></canvas>
+      <div class="hero-hint">Hover a star · click to open it in the graph</div>
+    </div>
+  </section>
+
+  <div class="divider">✦</div>
+
+  <section class="section">
+    <div class="section-head">
+      <div class="eyebrow">The four suns</div>
+      <h2 class="display h2">Every relation in this sky touches one of them.</h2>
+      <p class="meta" style="max-width:660px">Each orbit below is that scientist's real neighborhood — the people, institutes, and events tied to them by documented evidence. Click a card to see the cluster in the interactive graph.</p>
+    </div>
+    <div id="suns" class="grid cols4"></div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <div class="eyebrow">Milestones</div>
+      <h2 class="display h2">A century in the making.</h2>
+    </div>
+    <div id="timeline" class="timeline"></div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <div class="eyebrow">The web of relations</div>
+      <h2 class="display h2">How the sky is stitched together.</h2>
+    </div>
+    <div class="grid cols3" id="familyCards"></div>
+    <div class="card" style="margin-top:16px">
+      <h3>Relation types</h3>
+      <div id="types"></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <div class="eyebrow">Sources &amp; method</div>
+      <h2 class="display h2">Drawn from the archive, not from memory.</h2>
+    </div>
+    <div class="grid cols2">
+      <div class="card">
+        <h3>How this atlas was made</h3>
+        <p>The MAT4Person pipeline reads archival biography sites, albums, and institutional histories, then asks <b data-model>the model</b> one focused question per candidate pair: <i>is there a documented relation — and where exactly does the text say so?</i></p>
+        <p>Only positive relations survive, each with its relation type, confidence grade, source path, page number, and exact quote. Nothing is drawn that cannot be pointed at.</p>
+        <p id="methodStats" class="meta"></p>
+        <div class="actions"><a class="btn ghost mini" href="model_report.html">Full run report →</a></div>
+      </div>
+      <div class="card">
+        <h3>Most-cited sources</h3>
+        <div id="sources"></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div><span class="star">✦</span> MAT4Person — an evidence-first atlas of Turkish science.</div>
+  <div class="mono">model <span data-model></span> · every edge cites source, page &amp; quote</div>
+</footer>
+
+<script src="assets/data.js"></script>
+<script src="assets/common.js"></script>
+<script src="assets/index.js"></script>
+</body>
+</html>

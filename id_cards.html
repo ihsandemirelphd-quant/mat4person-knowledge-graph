@@ -1,1 +1,68 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="stylesheet" href="assets/styles.css"><title>MAT4Person ID Cards</title></head><body><div class="topbar"><a class="brand" href="index.html"><span class="brand-mark">M4</span><span>MAT4Person Knowledge Graph</span></a><nav class="nav"><a href="index.html">Overview</a><a href="knowledge_graph.html">Graph</a><a href="id_cards.html">ID Cards</a><a href="evidence_atlas.html">Evidence</a><a href="model_report.html">Run Report</a></nav></div><main class="wrap"><section class="section"><div class="eyebrow">Node identity cards</div><h1 class="detail-title">One evidence profile for every node.</h1><div class="toolbar"><input id="q" class="field" placeholder="Search node, id, relation type"><select id="type" class="field"><option value="all">All node types</option><option value="fundamental_person">Fundamental people</option><option value="base_person">Base people</option><option value="institute">Institutes</option><option value="event">Events</option></select></div><p id="count" class="meta"></p></section><section class="id-layout"><aside><div id="cards" class="id-card-grid"></div></aside><div id="detail"></div></section></main><script src="assets/data.js"></script><script src="assets/id_cards.js"></script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ID Cards — MAT4Person</title>
+<meta name="description" content="Catalog cards for every person, institute, and event in the MAT4Person knowledge graph.">
+<link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%23e9b44c" d="M12 0l2.6 9.4L24 12l-9.4 2.6L12 24l-2.6-9.4L0 12l9.4-2.6z"/></svg>'>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+<canvas class="sky" aria-hidden="true"></canvas>
+
+<header class="topbar">
+  <a class="brand" href="index.html">
+    <span class="brand-mark">✦</span>
+    <span><span class="brand-name">MAT4Person</span><span class="brand-sub">Atlas of Turkish Science</span></span>
+  </a>
+  <nav class="nav">
+    <a href="index.html">Overview</a>
+    <a href="knowledge_graph.html">Constellation</a>
+    <a href="id_cards.html">ID Cards</a>
+    <a href="evidence_atlas.html">Evidence Atlas</a>
+    <a href="model_report.html">Run Report</a>
+  </nav>
+</header>
+
+<main class="wrap">
+  <section class="section" style="padding-top:34px">
+    <div class="cards-head">
+      <div>
+        <div class="eyebrow">Catalog</div>
+        <h1 class="display h2" style="margin-top:8px">ID Cards</h1>
+        <p class="meta" id="count"></p>
+      </div>
+      <div class="grow">
+        <input id="q" class="field" placeholder="Search names, aliases, relation types…" autocomplete="off">
+        <div class="toolbar" id="typeChips" style="margin-bottom:0"></div>
+      </div>
+      <div>
+        <select id="sort" class="field" style="margin:0">
+          <option value="degree">Sort: most connected</option>
+          <option value="name">Sort: name A→Z</option>
+          <option value="type">Sort: type</option>
+        </select>
+      </div>
+    </div>
+    <div id="cards" class="id-grid"></div>
+  </section>
+</main>
+
+<div id="modalBack" class="modal-back">
+  <div class="modal" id="modal"></div>
+</div>
+
+<footer class="footer">
+  <div><span class="star">✦</span> MAT4Person — an evidence-first atlas of Turkish science.</div>
+  <div class="mono">model <span data-model></span> · every edge cites source, page &amp; quote</div>
+</footer>
+
+<script src="assets/data.js"></script>
+<script src="assets/common.js"></script>
+<script src="assets/id_cards.js"></script>
+</body>
+</html>

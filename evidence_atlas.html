@@ -1,1 +1,62 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="stylesheet" href="assets/styles.css"><title>MAT4Person Evidence Atlas</title></head><body><div class="topbar"><a class="brand" href="index.html"><span class="brand-mark">M4</span><span>MAT4Person Knowledge Graph</span></a><nav class="nav"><a href="index.html">Overview</a><a href="knowledge_graph.html">Graph</a><a href="id_cards.html">ID Cards</a><a href="evidence_atlas.html">Evidence</a><a href="model_report.html">Run Report</a></nav></div><main class="wrap"><section class="section"><div class="eyebrow">Evidence atlas</div><h1 class="detail-title">Readable evidence, one relation at a time.</h1><div class="toolbar"><input id="q" class="field" placeholder="Search relation, quote, source"><select id="family" class="field"><option value="all">All families</option><option value="person_person">Person-person</option><option value="person_institute">Person-institute</option><option value="person_event">Person-event</option></select><select id="confidence" class="field"><option value="all">All confidence</option><option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option></select></div><p id="count" class="meta"></p></section><section class="evidence-page"><aside><h2>Top sources</h2><div id="sources" class="node-list"></div></aside><div class="reader" id="reader"><h2 class="detail-title">Select evidence</h2></div></section><section class="section"><div id="relations" class="evidence-list"></div></section></main><script src="assets/data.js"></script><script src="assets/evidence.js"></script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Evidence Atlas — MAT4Person</title>
+<meta name="description" content="Every relation in the MAT4Person knowledge graph, with its exact quote, source, and page.">
+<link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%23e9b44c" d="M12 0l2.6 9.4L24 12l-9.4 2.6L12 24l-2.6-9.4L0 12l9.4-2.6z"/></svg>'>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+<canvas class="sky" aria-hidden="true"></canvas>
+
+<header class="topbar">
+  <a class="brand" href="index.html">
+    <span class="brand-mark">✦</span>
+    <span><span class="brand-name">MAT4Person</span><span class="brand-sub">Atlas of Turkish Science</span></span>
+  </a>
+  <nav class="nav">
+    <a href="index.html">Overview</a>
+    <a href="knowledge_graph.html">Constellation</a>
+    <a href="id_cards.html">ID Cards</a>
+    <a href="evidence_atlas.html">Evidence Atlas</a>
+    <a href="model_report.html">Run Report</a>
+  </nav>
+</header>
+
+<main class="wrap">
+  <section class="section" style="padding-top:34px">
+    <div class="section-head">
+      <div class="eyebrow">The archive</div>
+      <h1 class="display h2">Evidence Atlas</h1>
+      <p class="meta" style="max-width:640px">Nothing in this atlas is asserted without a text to point at. Each entry below is one documented relation — with the exact quote, the source document, and the page where it appears.</p>
+    </div>
+
+    <div class="atlas">
+      <div>
+        <input id="q" class="field" placeholder="Search quotes, names, sources…" autocomplete="off">
+        <div class="toolbar" id="familyChips"></div>
+        <div class="toolbar" id="confChips"></div>
+        <p class="meta" id="count"></p>
+        <div id="relations" class="evidence-list"></div>
+        <div id="moreWrap" style="text-align:center;margin-top:14px"></div>
+      </div>
+      <aside class="reader" id="reader"></aside>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div><span class="star">✦</span> MAT4Person — an evidence-first atlas of Turkish science.</div>
+  <div class="mono">model <span data-model></span> · every edge cites source, page &amp; quote</div>
+</footer>
+
+<script src="assets/data.js"></script>
+<script src="assets/common.js"></script>
+<script src="assets/evidence.js"></script>
+</body>
+</html>
