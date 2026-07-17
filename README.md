@@ -15,6 +15,8 @@ Pages:
 - `id_cards.html` — searchable catalog card for every node, with a detail view
 - `evidence_atlas.html` — evidence reader: every relation with its exact quote, source, and page
 - `model_report.html` — model, token, cost, and coverage report for the extraction run
+- `academic_genealogy.html` — standalone radial tree of Gündüz İkeda's PhD descendants (own data file, single source: Alp Eden 2026)
+- `simple.html` — lightweight single-page alternative: the same four-suns sky as one static SVG, no animations, system fonts; switchable from the full site's top bar
 
 All run-specific text (model name, counts) is rendered from `assets/data.js` at runtime. Local entry point: `index.html`.
 

@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MAT4Person — Simple View</title>
+<meta name="description" content="A lightweight, single-page view of the MAT4Person knowledge graph: four suns of Turkish science and their documented sky.">
+<link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%23e9b44c" d="M12 0l2.6 9.4L24 12l-9.4 2.6L12 24l-2.6-9.4L0 12l9.4-2.6z"/></svg>'>
+<style>
+  :root{
+    --bg:#0c1017;--panel:#131926;--line:#232c40;--ink:#e8edf7;--muted:#93a0ba;--faint:#5d6a85;
+    --gold:#e9b44c;
+  }
+  *{box-sizing:border-box;margin:0}
+  body{background:var(--bg);color:var(--ink);font:15px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif}
+  a{color:var(--gold);text-decoration:none}
+  a:hover{text-decoration:underline}
+  header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 20px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+  header h1{font-size:17px;font-weight:650}
+  header h1 .sub{color:var(--muted);font-weight:400;font-size:13px;margin-left:8px}
+  .pill{border:1px solid var(--line);border-radius:999px;padding:6px 14px;font-size:13px;color:var(--ink);background:var(--panel)}
+  .pill:hover{border-color:var(--gold);color:var(--gold);text-decoration:none}
+  main{max-width:1240px;margin:0 auto;padding:18px 20px 40px}
+  .statline{color:var(--muted);font-size:13.5px;margin:2px 0 14px}
+  .layout{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:18px;align-items:start}
+  @media(max-width:920px){.layout{grid-template-columns:1fr}}
+  .sky-box{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  svg{display:block;width:100%;height:auto;font-family:inherit}
+  .legend{display:flex;flex-wrap:wrap;gap:10px 14px;padding:10px 14px;border-top:1px solid var(--line);font-size:12px;color:var(--muted)}
+  .legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:-1px}
+  .legend i.dash{width:16px;height:2px;border-radius:0;vertical-align:2px;background:repeating-linear-gradient(90deg,#b98bfa 0 4px,transparent 4px 7px)}
+  aside .box{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:14px}
+  #detail{max-height:70vh;overflow-y:auto}
+  input{width:100%;padding:9px 12px;border-radius:8px;border:1px solid var(--line);background:#0e1420;color:var(--ink);font:inherit;font-size:14px}
+  input:focus{outline:1px solid var(--gold)}
+  .list{max-height:280px;overflow-y:auto;margin-top:10px}
+  .row{display:flex;gap:8px;align-items:center;padding:6px;border-radius:8px;cursor:pointer;font-size:13.5px}
+  .row:hover{background:#1a2233}
+  .row i{width:9px;height:9px;border-radius:50%;flex:none}
+  .row small{color:var(--faint);margin-left:auto;padding-left:8px}
+  h2{font-size:16px;margin-bottom:6px}
+  .tag{display:inline-block;border:1px solid var(--line);border-radius:6px;padding:1px 7px;font-size:11.5px;color:var(--muted);margin:1px 3px 1px 0}
+  a.tag:hover{border-color:var(--gold);text-decoration:none}
+  .rel{border-top:1px solid var(--line);padding:10px 0}
+  .rel b{cursor:pointer}
+  .rel b:hover{text-decoration:underline}
+  blockquote{border-left:2px solid var(--line);margin:6px 0;padding:2px 0 2px 10px;color:var(--muted);font-size:13px;font-style:italic}
+  .src{color:var(--faint);font-size:11.5px;font-family:ui-monospace,SFMono-Regular,monospace;word-break:break-all}
+  footer{max-width:1240px;margin:0 auto;padding:0 20px 40px;color:var(--faint);font-size:12.5px}
+</style>
+</head>
+<body>
+<header>
+  <h1>✦ MAT4Person <span class="sub">simple view — four suns of Turkish science</span></h1>
+  <nav style="display:flex;gap:8px;flex-wrap:wrap">
+    <a class="pill" href="index.html">Full version →</a>
+  </nav>
+</header>
+
+<main>
+  <p class="statline" id="stats"></p>
+  <div class="layout">
+    <div class="sky-box">
+      <svg id="sky" role="img" aria-label="Constellation of the four suns and their documented relations"></svg>
+      <div class="legend" id="legend"></div>
+    </div>
+    <aside>
+      <div class="box">
+        <input id="q" placeholder="Search a name…" autocomplete="off">
+        <div class="list" id="list"></div>
+      </div>
+      <div class="box" id="detail"></div>
+    </aside>
+  </div>
+</main>
+
+<footer>
+  Every relation cites a source and an exact quote. Dig deeper in the
+  <a href="knowledge_graph.html">interactive constellation</a>, the
+  <a href="evidence_atlas.html">evidence atlas</a>, the
+  <a href="id_cards.html">ID cards</a> or the
+  <a href="academic_genealogy.html">İkeda genealogy</a>.
+</footer>
+
+<script src="assets/data.js"></script>
+<script src="assets/common.js"></script>
+<script src="assets/simple.js"></script>
+</body>
+</html>
