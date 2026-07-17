@@ -306,6 +306,7 @@
       <div class="toolbar" style="margin-top:12px">
         <a class="btn ghost mini" href="${cardLink(n.id)}">Open ID card</a>
         <button class="btn ghost mini" id="inspFocus">${state.focus ? 'Unfocus' : 'Focus'} neighborhood</button>
+        ${n.id === 'person:masatoshi_gunduz_ikeda' ? '<a class="btn ghost mini" href="academic_genealogy.html">View academic genealogy →</a>' : ''}
         <a class="btn ghost mini" href="${contributeLink(n.label)}" target="_blank" rel="noopener">+ Suggest a relation</a>
       </div>
       <div id="relGroups"></div>`;

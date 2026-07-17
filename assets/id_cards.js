@@ -96,6 +96,7 @@
       ${confMeter(n.confidence || {})}
       <div class="toolbar" style="margin:14px 0">
         ${rels.length ? `<a class="btn mini" href="${graphLink(n.id)}">View in constellation</a>` : ''}
+        ${n.id === 'person:masatoshi_gunduz_ikeda' ? '<a class="btn ghost mini" href="academic_genealogy.html">View academic genealogy →</a>' : ''}
         <a class="btn ghost mini" href="${contributeLink(n.label)}" target="_blank" rel="noopener">+ Suggest a relation for ${esc(n.label)}</a>
         <button class="btn ghost mini" id="modalBackBtn">Back to catalog</button>
       </div>
