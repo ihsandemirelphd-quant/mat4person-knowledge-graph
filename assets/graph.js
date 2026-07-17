@@ -3,8 +3,9 @@
   const M = window.M4;
   const {
     DATA, fmt, esc, el, reduceMotion, FAMILY, CONF,
-    typeColor, typeLabel, typeShape, familyColor, confColor, familyLabel,
+    typeColor, typeLabel, typeShape, nodeColor, familyColor, confColor, familyLabel,
     nodeRadius, drawNode, legendGlyph, makeSim, cardLink, atlasLink, initials, sourceTail, hashCode, contributeLink,
+    sourceChip,
   } = M;
 
   /* ---------- model: connected nodes only (isolated ones live in the ID cards) ---------- */
@@ -148,12 +149,15 @@
       ctx.lineWidth = (e === hoverEdge ? 2.6 : e.confidence === 'high' ? 1.5 : 1) * lw;
       if (inNb && hasSel) {
         const grad = ctx.createLinearGradient(g.ax, g.ay, g.bx, g.by);
-        grad.addColorStop(0, typeColor(e.a.type));
-        grad.addColorStop(1, typeColor(e.b.type));
+        grad.addColorStop(0, nodeColor(e.a));
+        grad.addColorStop(1, nodeColor(e.b));
         ctx.strokeStyle = grad;
         if (!reduceMotion) { ctx.setLineDash([6, 8]); ctx.lineDashOffset = -t * .022; }
       } else {
         ctx.strokeStyle = familyColor(e.family);
+        /* fg_activity / fg_talk / fg_paper / fg_member edges get a dashed line
+           so the Feza Gürsey connections read distinctly in the constellation. */
+        if (e.isFg) { ctx.setLineDash([5, 4]); if (!reduceMotion) ctx.lineDashOffset = -t * .012; }
       }
       ctx.beginPath();
       ctx.moveTo(g.ax, g.ay);
@@ -259,7 +263,7 @@
     const box = inspector.querySelector('#sunShortcuts');
     suns.forEach(n => {
       const row = el('div', 'node-row', `
-        <span class="dot" style="background:${typeColor(n.type)};color:${typeColor(n.type)}"></span>
+        <span class="dot" style="background:${nodeColor(n)};color:${nodeColor(n)}"></span>
         <span class="grow"><b>${esc(n.label)}</b><small>${n.degree} relations</small></span>
         <span class="deg">→</span>`);
       row.onclick = () => selectNode(n, true);
@@ -288,7 +292,7 @@
     const sun = n.type === 'fundamental_person';
     inspector.innerHTML = `
       <div class="insp-head">
-        <span class="insp-mark" style="--c:${typeColor(n.type)}">${sun ? '✦' : esc(initials(n.label))}</span>
+        <span class="insp-mark" style="--c:${nodeColor(n)}">${sun ? '✦' : esc(initials(n.label))}</span>
         <div style="min-width:0">
           <h2 class="detail-title">${esc(n.label)}</h2>
           <div class="meta">${esc(typeLabel(n.type))} · ${n.degree} relations</div>
@@ -336,7 +340,7 @@
       ${evidence.map(ev => `
         ${ev.exact_quote ? `<p class="quote">${esc(ev.exact_quote)}</p>` : ''}
         ${ev.note ? `<p class="meta">${esc(ev.note)}</p>` : ''}
-        <div class="src-chip" title="${esc(ev.source_path || '')}">📄 ${esc(sourceTail(ev.source_path))}${ev.page ? ' · p.' + esc(ev.page) : ''}</div>`).join('<hr style="border:0;border-top:1px solid var(--line-soft);margin:14px 0">')}
+        ${sourceChip(ev.source_path, ev.source_id, ev.page ? ' · p.' + esc(ev.page) : '', { tail: true })}`).join('<hr style="border:0;border-top:1px solid var(--line-soft);margin:14px 0">')}
       <div class="toolbar" style="margin-top:14px">
         <a class="btn mini" href="${atlasLink(e.id)}">Read in Evidence Atlas</a>
       </div>
@@ -373,7 +377,7 @@
     list.innerHTML = '';
     [...visNodes].sort((a, b) => (b.degree || 0) - (a.degree || 0)).slice(0, 70).forEach(n => {
       const row = el('div', 'node-row' + (selected?.item === n ? ' sel' : ''), `
-        <span class="dot" style="background:${typeColor(n.type)};color:${typeColor(n.type)}"></span>
+        <span class="dot" style="background:${nodeColor(n)};color:${nodeColor(n)}"></span>
         <span class="grow"><b>${esc(n.label)}</b><small>${esc(typeLabel(n.type))}</small></span>
         <span class="deg">${n.degree}</span>`);
       row.onclick = () => selectNode(n, true);
@@ -527,9 +531,10 @@
 
   /* ---------- legend ---------- */
   document.getElementById('legend').innerHTML =
-    ['fundamental_person', 'base_person', 'institute', 'event']
+    ['fundamental_person', 'base_person', 'institute', 'institute_nebula', 'event']
       .map(t => `<span>${legendGlyph(t)}${typeLabel(t)}</span>`).join('') +
-    Object.entries(FAMILY).map(([f, c]) => `<span><i style="display:inline-block;width:14px;height:2px;background:${c};border-radius:2px"></i>${familyLabel(f)}</span>`).join('');
+    Object.entries(FAMILY).map(([f, c]) => `<span><i style="display:inline-block;width:14px;height:2px;background:${c};border-radius:2px"></i>${familyLabel(f)}</span>`).join('') +
+    `<span><svg width="20" height="8" style="vertical-align:middle;margin-right:2px"><line x1="1" y1="4" x2="19" y2="4" stroke="#b98bfa" stroke-width="2" stroke-dasharray="4,3"/></svg>Feza Gürsey bağı (fg_*)</span>`;
 
   /* ---------- deep link ---------- */
   function applyHash() {

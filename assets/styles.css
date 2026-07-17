@@ -317,8 +317,10 @@ select.field option{background:var(--panel-solid);color:var(--ink)}
 .src-chip{
   display:inline-flex;align-items:center;gap:8px;max-width:100%;border:1px solid var(--line-soft);
   background:rgba(148,163,204,.05);border-radius:9px;padding:6px 10px;margin:3px 0;
-  font-family:var(--mono);font-size:11px;color:var(--muted);
+  font-family:var(--mono);font-size:11px;color:var(--muted);text-decoration:none;
 }
+a.src-chip{cursor:pointer;transition:border-color .16s,color .16s,background .16s}
+a.src-chip:hover{border-color:rgba(233,180,76,.5);color:var(--gold-2);background:rgba(233,180,76,.06)}
 
 /* ---------- kpis (report) ---------- */
 .kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin:18px 0}

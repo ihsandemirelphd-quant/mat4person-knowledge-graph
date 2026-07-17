@@ -9,15 +9,24 @@ window.M4 = (() => {
     fundamental_person: { color: '#e9b44c', label: 'centennial scientist', shape: 'sun' },
     base_person:        { color: '#57d0ba', label: 'person',               shape: 'dot' },
     institute:          { color: '#71a7ff', label: 'institute',            shape: 'diamond' },
+    institute_nebula:   { color: '#b98bfa', label: 'FG institute (nebula)', shape: 'nebula' },
     event:              { color: '#ff8175', label: 'event',                shape: 'star' },
     unknown:            { color: '#a78bfa', label: 'unknown',              shape: 'dot' },
   };
   const FAMILY = { person_person: '#57d0ba', person_institute: '#71a7ff', person_event: '#ff8175' };
   const CONF = { high: '#57d0ba', medium: '#e9b44c', low: '#ff8175' };
+  /* The two Feza Gürsey institution nodes share a type (institute_nebula) but
+     get distinct colors so they read as separate constellations, per the
+     roadmap's "FGE mor, FGRC turkuaz" note. */
+  const NEBULA_COLORS = {
+    'institute:feza_gursey_enstitusu': '#b98bfa',
+    'institute:feza_gursey_research_center': '#48d7c9',
+  };
 
   const typeColor = t => (TYPE[t] || TYPE.unknown).color;
   const typeLabel = t => (TYPE[t] || TYPE.unknown).label;
   const typeShape = t => (TYPE[t] || TYPE.unknown).shape;
+  const nodeColor = n => NEBULA_COLORS[n?.id] || typeColor(n?.type);
   const familyColor = f => FAMILY[f] || '#e9b44c';
   const confColor = c => CONF[c] || '#9aa4bd';
   const familyLabel = x => String(x || '').replaceAll('_', ' ');
@@ -26,9 +35,30 @@ window.M4 = (() => {
   const cardLink = id => `id_cards.html#${encodeURIComponent(id)}`;
   const graphLink = id => `knowledge_graph.html#node=${encodeURIComponent(id)}`;
   const atlasLink = relId => `evidence_atlas.html#rel=${encodeURIComponent(relId)}`;
+  const sourceLink = sourceId => sourceId ? `evidence_atlas.html?source=${encodeURIComponent(sourceId)}` : null;
   const initials = label => String(label || '?').split(/\s+/).filter(Boolean).slice(0, 2).map(w => w[0]).join('').toUpperCase();
   const sourceTail = p => String(p || '').split('/').pop() || '';
   const hashCode = s => { let h = 0; for (let i = 0; i < s.length; i++) h = ((h << 5) - h) + s.charCodeAt(i) | 0; return h; };
+
+  /* ---------- source index (source_id ↔ path, for the clickable evidence filter) ---------- */
+  const sourceIndex = new Map(); // source_id -> { path, count }
+  const pathToId = new Map();    // source_path -> source_id
+  (DATA.relations || []).forEach(r => (r.evidence || []).forEach(ev => {
+    if (!ev.source_id) return;
+    if (ev.source_path) pathToId.set(ev.source_path, ev.source_id);
+    const rec = sourceIndex.get(ev.source_id) || { path: ev.source_path, count: 0 };
+    rec.count++;
+    sourceIndex.set(ev.source_id, rec);
+  }));
+
+  /* source citation chip — a link when a source_id is resolvable, plain text otherwise */
+  function sourceChip(path, sourceId, suffix = '', opts = {}) {
+    const id = sourceId || pathToId.get(path);
+    const text = opts.tail ? sourceTail(path) : (path || 'unknown source');
+    const label = `📄 ${esc(text)}${suffix}`;
+    if (id) return `<a class="src-chip" href="${sourceLink(id)}" title="${esc(path || '')} — click to filter the Evidence Atlas">${label}</a>`;
+    return `<div class="src-chip" title="${esc(path || '')}">${label}</div>`;
+  }
 
   /* ---------- community contribution links ----------
      Static site, no backend — submissions go through a GitHub Issue Form
@@ -166,12 +196,38 @@ window.M4 = (() => {
   /* ---------- node radius + shape painters (shared by graph & hero) ---------- */
   function nodeRadius(n) {
     if (n.type === 'fundamental_person') return Math.min(30, 16 + Math.sqrt(n.degree || 1) * 1.15);
+    if (n.type === 'institute_nebula') return Math.min(22, 11 + Math.sqrt(n.degree || 1) * 1.4);
     return Math.min(13, 3.4 + Math.sqrt(n.degree || 1) * 1.7);
   }
 
   function drawNode(ctx, n, x, y, r, t, opts = {}) {
-    const color = typeColor(n.type);
+    const color = nodeColor(n);
     const shape = typeShape(n.type);
+    if (shape === 'nebula') {
+      const pulse = opts.still ? 1 : 1 + .05 * Math.sin(t * .0007 + (n._ph || 0));
+      const rr = r * pulse;
+      const glow = ctx.createRadialGradient(x, y, rr * .1, x, y, rr * 2.8);
+      glow.addColorStop(0, color + 'b0');
+      glow.addColorStop(.5, color + '3a');
+      glow.addColorStop(1, 'transparent');
+      ctx.fillStyle = glow;
+      ctx.beginPath(); ctx.arc(x, y, rr * 2.8, 0, Math.PI * 2); ctx.fill();
+      /* a few overlapping soft blobs, offset deterministically per node, for a cloud-like silhouette */
+      const seed = Math.abs(hashCode(n.id));
+      ctx.globalAlpha = .5;
+      ctx.fillStyle = color;
+      for (let i = 0; i < 3; i++) {
+        const ang = ((seed >> (i * 6)) % 360) * Math.PI / 180;
+        const off = rr * .3;
+        ctx.beginPath();
+        ctx.arc(x + Math.cos(ang) * off, y + Math.sin(ang) * off, rr * .58, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.globalAlpha = .92;
+      ctx.beginPath(); ctx.arc(x, y, rr * .42, 0, Math.PI * 2); ctx.fill();
+      ctx.globalAlpha = 1;
+      return;
+    }
     if (shape === 'sun') {
       const pulse = opts.still ? 1 : 1 + .035 * Math.sin(t * .0011 + (n._ph || 0));
       const rr = r * pulse;
@@ -211,6 +267,7 @@ window.M4 = (() => {
   function legendGlyph(type) {
     const c = typeColor(type), s = typeShape(type);
     if (s === 'sun') return `<svg width="13" height="13" viewBox="0 0 14 14"><circle cx="7" cy="7" r="6.4" fill="${c}" opacity=".28"/><circle cx="7" cy="7" r="3.6" fill="${c}"/></svg>`;
+    if (s === 'nebula') return `<svg width="14" height="14" viewBox="0 0 14 14"><circle cx="7" cy="7" r="6.6" fill="${c}" opacity=".22"/><circle cx="5.4" cy="6" r="3.4" fill="${c}" opacity=".55"/><circle cx="8.6" cy="8" r="3.4" fill="${c}" opacity=".55"/><circle cx="7" cy="7" r="2.4" fill="${c}"/></svg>`;
     if (s === 'diamond') return `<svg width="12" height="12" viewBox="0 0 12 12"><path d="M6 .6 11.4 6 6 11.4.6 6Z" fill="${c}"/></svg>`;
     if (s === 'star') return `<svg width="13" height="13" viewBox="0 0 14 14"><path d="M7 0l1.7 5.3L14 7l-5.3 1.7L7 14 5.3 8.7 0 7l5.3-1.7Z" fill="${c}"/></svg>`;
     return `<svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="4.4" fill="${c}"/></svg>`;
@@ -308,8 +365,9 @@ window.M4 = (() => {
 
   return {
     DATA, nodeById, fmt, reduceMotion, TYPE, FAMILY, CONF,
-    typeColor, typeLabel, typeShape, familyColor, confColor, familyLabel,
+    typeColor, typeLabel, typeShape, nodeColor, familyColor, confColor, familyLabel,
     esc, el, relationTitle, cardLink, graphLink, atlasLink, initials, sourceTail, hashCode,
+    sourceIndex, pathToId, sourceLink, sourceChip,
     nodeRadius, drawNode, legendGlyph, makeSim, animateCounters, contributeLink,
   };
 })();

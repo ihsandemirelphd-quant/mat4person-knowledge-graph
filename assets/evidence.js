@@ -3,18 +3,38 @@
   const {
     DATA, nodeById, fmt, esc, el, FAMILY, CONF,
     typeColor, familyColor, confColor, familyLabel,
-    cardLink, graphLink, sourceTail,
+    cardLink, graphLink, sourceTail, sourceChip, sourceIndex,
   } = window.M4;
 
-  const filters = { q: '', families: new Set(Object.keys(FAMILY)), conf: new Set(['high', 'medium', 'low']) };
+  const initialSource = new URLSearchParams(location.search).get('source') || null;
+  const filters = { q: '', families: new Set(Object.keys(FAMILY)), conf: new Set(['high', 'medium', 'low']), source: initialSource };
   let filtered = [], selected = null, shown = 60;
 
   const listEl = document.getElementById('relations');
   const readerEl = document.getElementById('reader');
   const countEl = document.getElementById('count');
   const moreWrap = document.getElementById('moreWrap');
+  const sourceBarEl = el('div', 'toolbar');
+  countEl.insertAdjacentElement('beforebegin', sourceBarEl);
 
   const title = r => `${nodeById.get(r.source)?.label || r.source} ↔ ${nodeById.get(r.target)?.label || r.target}`;
+
+  /* ---------- clickable source filter (?source=<source_id>) ---------- */
+  function renderSourceBar() {
+    sourceBarEl.innerHTML = '';
+    if (!filters.source) return;
+    const rec = sourceIndex.get(filters.source);
+    const label = rec ? sourceTail(rec.path) : filters.source;
+    const chip = el('button', 'chip on', `<span class="swatch"></span>Source: ${esc(label)} · ✕`);
+    chip.title = rec ? rec.path : filters.source;
+    chip.style.setProperty('--c', '#e9b44c');
+    chip.onclick = () => {
+      filters.source = null;
+      history.replaceState(null, '', location.pathname + location.hash);
+      renderSourceBar(); selected = null; shown = 60; render();
+    };
+    sourceBarEl.appendChild(chip);
+  }
 
   /* ---------- chips ---------- */
   const famEl = document.getElementById('familyChips');
@@ -61,7 +81,7 @@
       ${evidence.map(ev => `
         ${ev.exact_quote ? `<p class="quote big" style="border:0;padding-left:0">${esc(ev.exact_quote)}</p>` : '<p class="meta">No quote recorded.</p>'}
         ${ev.note ? `<p class="meta" style="font-size:14px">${esc(ev.note)}</p>` : ''}
-        <div class="src-chip" title="${esc(ev.source_path || '')}">📄 ${esc(ev.source_path || 'unknown source')}${ev.page ? ` · page ${esc(ev.page)}` : ''}</div>
+        ${sourceChip(ev.source_path, ev.source_id, ev.page ? ` · page ${esc(ev.page)}` : '')}
       `).join('<hr style="border:0;border-top:1px solid var(--line-soft);margin:18px 0">')}
       <div class="toolbar" style="margin-top:18px">
         <a class="btn ghost mini" href="${cardLink(r.source)}">${esc(src?.label || 'source')} — card</a>
@@ -98,6 +118,7 @@
     const q = filters.q.toLowerCase();
     filtered = DATA.relations.filter(r => {
       if (!filters.families.has(r.family) || !filters.conf.has(r.confidence)) return false;
+      if (filters.source && !(r.evidence || []).some(ev => ev.source_id === filters.source)) return false;
       if (!q) return true;
       return (title(r) + ' ' + r.type + ' ' + (r.quote || '') + ' ' + (r.note || '') + ' ' + (r.sourcePath || '')).toLowerCase().includes(q);
     });
@@ -120,6 +141,20 @@
     }
   }
 
+  /* clicking a source chip inside the reader filters in place instead of reloading the page */
+  readerEl.addEventListener('click', e => {
+    const a = e.target.closest('a.src-chip');
+    if (!a) return;
+    const url = new URL(a.href);
+    if (url.pathname !== location.pathname) return;
+    const sid = url.searchParams.get('source');
+    if (!sid) return;
+    e.preventDefault();
+    filters.source = sid;
+    history.replaceState(null, '', location.pathname + '?source=' + encodeURIComponent(sid));
+    renderSourceBar(); selected = null; shown = 60; render();
+  });
+
   document.getElementById('q').oninput = e => { filters.q = e.target.value; selected = null; shown = 60; render(); };
 
   /* deep link #rel=<id> */
@@ -128,6 +163,7 @@
     const id = decodeURIComponent(m[1]);
     selected = DATA.relations.find(r => r.id === id) || null;
   }
+  renderSourceBar();
   render();
   if (selected) showReader(selected, true);
 })();

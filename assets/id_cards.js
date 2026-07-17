@@ -2,8 +2,8 @@
 (() => {
   const {
     DATA, nodeById, fmt, esc, el, CONF,
-    typeColor, typeLabel, familyColor, familyLabel, confColor,
-    graphLink, atlasLink, initials, sourceTail, contributeLink,
+    typeColor, typeLabel, nodeColor, familyColor, familyLabel, confColor,
+    graphLink, atlasLink, initials, sourceTail, contributeLink, sourceChip,
   } = window.M4;
 
   const filters = { q: '', type: 'all', sort: 'degree' };
@@ -13,7 +13,7 @@
   const modal = document.getElementById('modal');
 
   const relsFor = id => DATA.relations.filter(r => r.source === id || r.target === id);
-  const typeOrder = { fundamental_person: 0, base_person: 1, institute: 2, event: 3, unknown: 4 };
+  const typeOrder = { fundamental_person: 0, base_person: 1, institute: 2, institute_nebula: 2, event: 3, unknown: 4 };
 
   /* ---------- type filter chips ---------- */
   const chipsEl = document.getElementById('typeChips');
@@ -48,13 +48,13 @@
   function cardNode(n) {
     const types = Object.entries(n.relationTypes || {}).sort((a, b) => b[1] - a[1]);
     const card = el('article', 'id-card');
-    card.style.setProperty('--c', typeColor(n.type));
+    card.style.setProperty('--c', nodeColor(n));
     card.innerHTML = `
       <div class="head">
-        <span class="monogram" style="--c:${typeColor(n.type)}">${n.type === 'fundamental_person' ? '✦' : esc(initials(n.label))}</span>
+        <span class="monogram" style="--c:${nodeColor(n)}">${n.type === 'fundamental_person' ? '✦' : esc(initials(n.label))}</span>
         <div style="min-width:0">
           <h3>${esc(n.label)}</h3>
-          <div class="small" style="color:${typeColor(n.type)}">${esc(typeLabel(n.type))}</div>
+          <div class="small" style="color:${nodeColor(n)}">${esc(typeLabel(n.type))}</div>
         </div>
       </div>
       ${n.aliases?.length ? `<div class="aliases">${esc(n.aliases.join(' · '))}</div>` : ''}
@@ -79,9 +79,9 @@
     modal.innerHTML = `
       <button class="modal-close" id="modalClose" title="Close (Esc)">✕</button>
       <div class="insp-head">
-        <span class="insp-mark" style="--c:${typeColor(n.type)};width:56px;height:56px;font-size:20px">${n.type === 'fundamental_person' ? '✦' : esc(initials(n.label))}</span>
+        <span class="insp-mark" style="--c:${nodeColor(n)};width:56px;height:56px;font-size:20px">${n.type === 'fundamental_person' ? '✦' : esc(initials(n.label))}</span>
         <div style="min-width:0">
-          <div class="eyebrow" style="color:${typeColor(n.type)}">${esc(typeLabel(n.type))}</div>
+          <div class="eyebrow" style="color:${nodeColor(n)}">${esc(typeLabel(n.type))}</div>
           <h2 class="detail-title" style="font-size:32px">${esc(n.label)}</h2>
           <div class="mono">${esc(n.id)}</div>
         </div>
@@ -100,7 +100,7 @@
         <button class="btn ghost mini" id="modalBackBtn">Back to catalog</button>
       </div>
       ${topSources.length ? `<h4 style="font-size:11px;text-transform:uppercase;letter-spacing:.18em;color:var(--faint);margin:18px 0 6px">Most-cited sources for this node</h4>
-        ${topSources.map(([s, c]) => `<div class="src-chip" title="${esc(s)}">📄 ${esc(sourceTail(s))} · ${c}</div>`).join('<br>')}` : ''}
+        ${topSources.map(([s, c]) => sourceChip(s, null, ' · ' + c, { tail: true })).join('<br>')}` : ''}
       <h4 style="font-size:11px;text-transform:uppercase;letter-spacing:.18em;color:var(--faint);margin:20px 0 6px">Documented relations · ${rels.length}</h4>
       ${rels.length ? '' : '<p class="meta">No positive relations were found for this node in this run — it remains in the catalog awaiting future evidence.</p>'}
       <div id="modalRels"></div>`;

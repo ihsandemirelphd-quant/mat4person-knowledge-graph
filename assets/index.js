@@ -1,8 +1,8 @@
 /* MAT4Person — overview page: living hero constellation + sections */
 (() => {
   const {
-    DATA, fmt, reduceMotion, esc, el, typeColor, typeLabel, familyColor, familyLabel,
-    nodeRadius, drawNode, makeSim, graphLink, cardLink, animateCounters,
+    DATA, fmt, reduceMotion, esc, el, typeColor, typeLabel, nodeColor, familyColor, familyLabel,
+    nodeRadius, drawNode, makeSim, graphLink, cardLink, animateCounters, pathToId, sourceLink,
   } = window.M4;
   const stats = DATA.stats || {};
 
@@ -157,7 +157,7 @@
     /* orbiting companions */
     const c = card.querySelector('canvas'), cx = c.getContext('2d');
     const parts = nbs.slice(0, 46).map((n, i) => ({
-      color: typeColor(n.type),
+      color: nodeColor(n),
       r: 26 + (i * 7.3) % 58,
       a: (window.M4.hashCode(n.id) % 628) / 100,
       sp: (.0018 + (i % 7) * .0007) * (i % 2 ? 1 : -1),
@@ -245,10 +245,16 @@
 
   const srcEl = document.getElementById('sources');
   (stats.topSources || []).slice(0, 8).forEach(s => {
-    srcEl.appendChild(el('div', 'meter-row', `
-      <span class="lbl" style="font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(s.source)}">${esc(window.M4.sourceTail(s.source))}</span>
+    const sid = pathToId.get(s.source);
+    const tail = esc(window.M4.sourceTail(s.source));
+    const lbl = sid
+      ? `<a href="${sourceLink(sid)}" style="color:inherit;border-bottom:1px dotted var(--faint)" title="Filter the Evidence Atlas by ${esc(s.source)}">${tail}</a>`
+      : tail;
+    const row = el('div', 'meter-row', `
+      <span class="lbl" style="font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(s.source)}">${lbl}</span>
       <span class="meter"><i style="width:${Math.max(3, s.count / (stats.topSources[0]?.count || 1) * 100)}%"></i></span>
-      <span class="val">${fmt.format(s.count)}</span>`));
+      <span class="val">${fmt.format(s.count)}</span>`);
+    srcEl.appendChild(row);
   });
 
   animateCounters();

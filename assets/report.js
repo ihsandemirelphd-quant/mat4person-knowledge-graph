@@ -2,6 +2,7 @@
 (() => {
   const {
     DATA, fmt, esc, el, CONF, typeColor, typeLabel, familyColor, familyLabel, cardLink, animateCounters,
+    pathToId, sourceLink,
   } = window.M4;
   const s = DATA.stats || {};
   const usage = s.usage || {};
@@ -136,10 +137,40 @@
       <td style="color:${CONF.low}">${n.confidence?.low || 0}</td>`));
   });
 
+  /* ---------- two-phase extraction (v1 seed pilot vs v2 FGE/4-suns expansion) ---------- */
+  const phasesEl = document.getElementById('phases');
+  if (phasesEl) {
+    const v2 = s.v2Phase || {};
+    const v2u = v2.usage || {};
+    phasesEl.appendChild(el('div', 'card', `
+      <h4 style="margin-bottom:4px">Phase 1 — seed pilot</h4>
+      <p class="mono" style="font-size:12.5px;color:var(--muted);margin-bottom:10px">gemini-3.5-flash</p>
+      <div class="statline">
+        <span><b>${fmt.format(usage.calls || 0)}</b>calls</span>
+        <span><b>${fmt.format(usage.total_tokens || 0)}</b>tokens</span>
+        <span><b>$${Number(usage.estimated_usd || 0).toFixed(2)}</b>est. cost</span>
+      </div>
+      <p class="small" style="margin-top:8px">Fully tracked — every call's token usage and cost was recorded.</p>`));
+    phasesEl.appendChild(el('div', 'card', `
+      <h4 style="margin-bottom:4px">Phase 2 — FGE / 4-suns expansion</h4>
+      <p class="mono" style="font-size:12.5px;color:var(--muted);margin-bottom:10px">${esc(v2.model || 'claude-sonnet-5')}</p>
+      <div class="statline">
+        <span><b>${fmt.format(v2u.calls || 0)}</b>agent batches</span>
+        <span><b>${fmt.format(v2u.total_tokens || 0)}</b>tokens (floor)</span>
+        <span><b>${v2u.usage_missing || 0}</b>batches missing usage</span>
+      </div>
+      ${v2.method ? `<p class="small" style="margin-top:8px">${esc(v2.method)}</p>` : ''}
+      ${v2.note ? `<p class="small" style="margin-top:6px;color:var(--faint)">${esc(v2.note)}</p>` : ''}`));
+  }
+
   /* ---------- sources ---------- */
   const srcT = document.getElementById('srcTable');
   (s.topSources || []).forEach(x => {
-    srcT.appendChild(el('tr', '', `<td class="num" style="width:90px">${fmt.format(x.count)}</td><td class="mono" style="font-size:12px;color:var(--muted)">${esc(x.source)}</td>`));
+    const sid = pathToId.get(x.source);
+    const cell = sid
+      ? `<a href="${sourceLink(sid)}" style="color:var(--muted);border-bottom:1px dotted var(--faint)" title="Filter the Evidence Atlas by this source">${esc(x.source)}</a>`
+      : esc(x.source);
+    srcT.appendChild(el('tr', '', `<td class="num" style="width:90px">${fmt.format(x.count)}</td><td class="mono" style="font-size:12px;color:var(--muted)">${cell}</td>`));
   });
 
   animateCounters();
